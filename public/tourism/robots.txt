@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /api/
+
+Sitemap: https://tripuratourism.gov.in/sitemap.xml

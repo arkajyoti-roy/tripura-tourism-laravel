@@ -1,0 +1,1 @@
+import{ab as i}from"./chunk-XO6H2BDI.js";var o=class n{transform(e,r){if(!e)return[];if(!r||!r.trim())return e;let a=r.toLowerCase().trim();return e.filter(f=>Object.values(f).some(t=>t!=null&&String(t).toLowerCase().includes(a)))}static \u0275fac=function(r){return new(r||n)};static \u0275pipe=i({name:"tableSearch",type:n,pure:!0})};export{o as a};
