@@ -12,6 +12,14 @@ use App\Http\Controllers\Api\CommunicationMediaController;
 
 
 
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'Backend is healthy',
+    ]);
+});
+
+
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
 Route::post('/admin/send-login-otp', [AdminAuthController::class, 'sendLoginOtp']);
 
