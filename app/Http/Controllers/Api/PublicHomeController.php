@@ -95,6 +95,10 @@ class PublicHomeController extends Controller
                 $tour->image_url = $this->getTourImageUrl($tour, 'image');
                 $tour->image2_url = $this->getTourImageUrl($tour, 'image2');
                 $tour->image3_url = $this->getTourImageUrl($tour, 'image3');
+                $tour->image4_url = $this->getTourImageUrl($tour, 'image4');
+                $tour->image5_url = $this->getTourImageUrl($tour, 'image5');
+                $tour->image6_url = $this->getTourImageUrl($tour, 'image6');
+                $tour->image7_url = $this->getTourImageUrl($tour, 'image7');
                 return $tour;
             });
         
@@ -112,6 +116,10 @@ class PublicHomeController extends Controller
                 $tour->image_url = $this->getTourImageUrl($tour, 'image');
                 $tour->image2_url = $this->getTourImageUrl($tour, 'image2');
                 $tour->image3_url = $this->getTourImageUrl($tour, 'image3');
+                $tour->image4_url = $this->getTourImageUrl($tour, 'image4');
+                $tour->image5_url = $this->getTourImageUrl($tour, 'image5');
+                $tour->image6_url = $this->getTourImageUrl($tour, 'image6');
+                $tour->image7_url = $this->getTourImageUrl($tour, 'image7');
                 return $tour;
             });
         
@@ -127,6 +135,12 @@ class PublicHomeController extends Controller
             ->orderBy('id', 'desc')
             ->get()->map(function ($tour) {
                 $tour->image_url = $this->getTourImageUrl($tour, 'image');
+                $tour->image2_url = $this->getTourImageUrl($tour, 'image2');
+                $tour->image3_url = $this->getTourImageUrl($tour, 'image3');
+                $tour->image4_url = $this->getTourImageUrl($tour, 'image4');
+                $tour->image5_url = $this->getTourImageUrl($tour, 'image5');
+                $tour->image6_url = $this->getTourImageUrl($tour, 'image6');
+                $tour->image7_url = $this->getTourImageUrl($tour, 'image7');
                 return $tour;
             });
         return response()->json($tours);
@@ -138,6 +152,12 @@ class PublicHomeController extends Controller
     {
         $tours = DB::table('tour')->orderBy('id', 'desc')->limit(15)->get()->map(function ($tour) {
             $tour->image_url = $this->getTourImageUrl($tour, 'image');
+            $tour->image2_url = $this->getTourImageUrl($tour, 'image2');
+            $tour->image3_url = $this->getTourImageUrl($tour, 'image3');
+            $tour->image4_url = $this->getTourImageUrl($tour, 'image4');
+            $tour->image5_url = $this->getTourImageUrl($tour, 'image5');
+            $tour->image6_url = $this->getTourImageUrl($tour, 'image6');
+            $tour->image7_url = $this->getTourImageUrl($tour, 'image7');
             return $tour;
         });
         return response()->json($tours);
