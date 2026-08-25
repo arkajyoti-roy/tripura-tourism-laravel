@@ -48,6 +48,7 @@ class CommunicationMediaController extends Controller
 
         $existing = DB::table('communication_media')->first();
         if ($existing) {
+            unset($data['_method']);
             DB::table('communication_media')->where('id', $existing->id)->update($data);
         } else {
             $data['created_at'] = now();

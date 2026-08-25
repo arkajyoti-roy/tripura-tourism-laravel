@@ -118,6 +118,8 @@ class AccommodationController extends Controller
             }
         }
 
+        unset($data['_method']);
+
         DB::table('accommodation')->where('aid', $id)->update(array_filter($data, function ($val) {
             return !is_null($val);
         }));

@@ -90,6 +90,8 @@ class TestimonialController extends Controller
             }
         }
 
+        unset($data['_method']);
+
         DB::table('testimonials')->where('id', $id)->update($data);
         return response()->json(['message' => 'Testimonial updated successfully']);
     }

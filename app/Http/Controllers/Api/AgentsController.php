@@ -68,6 +68,8 @@ class AgentsController extends Controller
             'phone' => $request->phone,
         ];
 
+        unset($data['_method']);
+
         DB::table('agents')->where('id', $id)->update($data);
         return response()->json(['message' => 'Agent updated successfully']);
     }

@@ -53,6 +53,8 @@ class AgentController extends Controller
         $data = $request->all();
         $data['updateDate'] = date('Y-m-d H:i:s');
 
+        unset($data['_method']);
+
         $agent->update($data);
         return response()->json($agent);
     }

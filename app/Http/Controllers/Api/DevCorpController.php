@@ -102,6 +102,8 @@ class DevCorpController extends Controller
             }
         }
 
+        unset($data['_method']);
+
         DB::table('development_co')->where('id', $id)->update($data);
         return response()->json(['message' => 'Development Corporation Member updated successfully']);
     }

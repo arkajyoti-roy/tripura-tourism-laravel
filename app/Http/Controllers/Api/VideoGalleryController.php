@@ -37,6 +37,8 @@ class VideoGalleryController extends Controller
             'link' => 'required|string',
         ]);
 
+        unset($data['_method']);
+
         DB::table('video')->where('id', $id)->update([
             'name' => $request->name,
             'link' => $request->link,

@@ -80,6 +80,8 @@ class TouristCategoryController extends Controller
             }
         }
 
+        unset($data['_method']);
+
         DB::table('category')->where('id', $id)->update($data);
         return response()->json(['message' => 'Category updated successfully']);
     }

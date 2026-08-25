@@ -86,6 +86,8 @@ class AdventureController extends Controller
             $data['image'] = $imageName;
         }
 
+        unset($data['_method']);
+
         $adventure->update($data);
         $this->appendImageUrl($adventure);
 

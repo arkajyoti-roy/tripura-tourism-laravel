@@ -123,6 +123,7 @@ class SettingsController extends Controller
 
         $existing = DB::table('smtp_settings')->first();
         if ($existing) {
+            unset($data['_method']);
             DB::table('smtp_settings')->where('id', $existing->id)->update($data);
         } else {
             $data['created_at'] = now();

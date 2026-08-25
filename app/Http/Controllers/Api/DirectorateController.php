@@ -102,6 +102,8 @@ class DirectorateController extends Controller
             }
         }
 
+        unset($data['_method']);
+
         DB::table('directorate')->where('id', $id)->update($data);
         return response()->json(['message' => 'Directorate updated successfully']);
     }

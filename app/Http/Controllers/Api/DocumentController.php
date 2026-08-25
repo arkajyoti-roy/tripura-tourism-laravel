@@ -98,6 +98,8 @@ class DocumentController extends Controller
             $data['file'] = $filename;
         }
 
+        unset($data['_method']);
+
         $document->update($data);
         $document->file_url = asset('images/documents/' . $document->file);
         return response()->json($document);

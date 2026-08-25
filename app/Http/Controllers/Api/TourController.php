@@ -106,6 +106,8 @@ class TourController extends Controller
             }
         }
 
+        unset($data['_method']);
+
         DB::table('tour')->where('id', $id)->update($data);
         return response()->json(['message' => 'Tour updated successfully']);
     }
@@ -133,6 +135,7 @@ class TourController extends Controller
         if (!$tour) return response()->json(['message' => 'Not found'], 404);
 
         $newVal = ($tour->show_on_homepage == 1) ? 0 : 1;
+        unset($data['_method']);
         DB::table('tour')->where('id', $id)->update(['show_on_homepage' => $newVal]);
 
         return response()->json(['message' => 'Visibility updated successfully', 'show_on_homepage' => $newVal]);

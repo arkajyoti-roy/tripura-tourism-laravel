@@ -98,6 +98,8 @@ class GuideController extends Controller
             }
         }
 
+        unset($data['_method']);
+
         DB::table('guides')->where('id', $id)->update($data);
         return response()->json(['message' => 'Guide updated successfully']);
     }

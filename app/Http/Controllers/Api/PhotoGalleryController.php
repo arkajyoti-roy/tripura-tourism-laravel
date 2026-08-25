@@ -80,6 +80,8 @@ class PhotoGalleryController extends Controller
             $data['image'] = $filename;
         }
 
+        unset($data['_method']);
+
         DB::table('photo')->where('id', $id)->update($data);
         return response()->json(['message' => 'Photo Gallery updated successfully']);
     }
