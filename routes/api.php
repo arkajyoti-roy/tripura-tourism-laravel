@@ -32,18 +32,30 @@ Route::middleware(['auth:sanctum', 'log.admin'])->group(function () {
     Route::delete('/admin/tourist-category/{id}', [TouristCategoryController::class, 'destroy']);
 
     Route::apiResource('/admin/tours', TourController::class);
+    Route::post('/admin/tours/{id}', [TourController::class, 'update']);
     Route::post('/admin/tours/{id}/toggle-home', [TourController::class, 'toggleHome']);
     Route::apiResource('/admin/adventures', AdventureController::class);
+    Route::post('/admin/adventures/{id}', [AdventureController::class, 'update']);
     Route::apiResource('/admin/contact', App\Http\Controllers\Api\ContactController::class);
+    Route::post('/admin/contact/{id}', [App\Http\Controllers\Api\ContactController::class, 'update']);
     Route::apiResource('/admin/documents', App\Http\Controllers\Api\DocumentController::class);
+    Route::post('/admin/documents/{id}', [App\Http\Controllers\Api\DocumentController::class, 'update']);
     Route::apiResource('/admin/agents', App\Http\Controllers\Api\AgentController::class);
+    Route::post('/admin/agents/{id}', [App\Http\Controllers\Api\AgentController::class, 'update']);
     Route::apiResource('/admin/accommodations', AccommodationController::class);
+    Route::post('/admin/accommodations/{id}', [AccommodationController::class, 'update']);
     Route::apiResource('/admin/directorate', App\Http\Controllers\Api\DirectorateController::class);
+    Route::post('/admin/directorate/{id}', [App\Http\Controllers\Api\DirectorateController::class, 'update']);
     Route::apiResource('/admin/development-corporation', App\Http\Controllers\Api\DevCorpController::class);
+    Route::post('/admin/development-corporation/{id}', [App\Http\Controllers\Api\DevCorpController::class, 'update']);
     Route::apiResource('/admin/guides', App\Http\Controllers\Api\GuideController::class);
+    Route::post('/admin/guides/{id}', [App\Http\Controllers\Api\GuideController::class, 'update']);
     Route::apiResource('/admin/photos', App\Http\Controllers\Api\PhotoGalleryController::class);
+    Route::post('/admin/photos/{id}', [App\Http\Controllers\Api\PhotoGalleryController::class, 'update']);
     Route::apiResource('/admin/videos', App\Http\Controllers\Api\VideoGalleryController::class);
+    Route::post('/admin/videos/{id}', [App\Http\Controllers\Api\VideoGalleryController::class, 'update']);
     Route::apiResource('/admin/testimonials', App\Http\Controllers\Api\TestimonialController::class);
+    Route::post('/admin/testimonials/{id}', [App\Http\Controllers\Api\TestimonialController::class, 'update']);
 
     // Dashboard route
     Route::get('/admin/dashboard/stats', [App\Http\Controllers\Api\SettingsController::class, 'getDashboardStats']);
