@@ -14,7 +14,8 @@ class AccommodationController extends Controller
     {
         $accommodations = DB::table('accommodation')->orderBy('aid', 'desc')->get()->map(function ($acc) {
             $acc->id = $acc->aid; 
-            $acc->image_url = $acc->image ? asset('images/accommodation/' . $acc->image) : null;
+            $path = ($acc->type == '4') ? 'images/accommodation/homestay/' : 'images/accommodation/';
+            $acc->image_url = $acc->image ? asset($path . $acc->image) : null;
             return $acc;
         });
         return response()->json($accommodations);
@@ -54,7 +55,9 @@ class AccommodationController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/accommodation'), $filename);
+            $type = $request->type ?? '1';
+            $path = ($type == '4') ? public_path('images/accommodation/homestay') : public_path('images/accommodation');
+            $file->move($path, $filename);
             $data['image'] = $filename;
         }
 
@@ -69,7 +72,8 @@ class AccommodationController extends Controller
         $acc = DB::table('accommodation')->where('aid', $id)->first();
         if (!$acc) return response()->json(['message' => 'Not found'], 404);
         $acc->id = $acc->aid;
-        $acc->image_url = $acc->image ? asset('images/accommodation/' . $acc->image) : null;
+        $path = ($acc->type == '4') ? 'images/accommodation/homestay/' : 'images/accommodation/';
+        $acc->image_url = $acc->image ? asset($path . $acc->image) : null;
         return response()->json($acc);
     }
 
@@ -109,12 +113,16 @@ class AccommodationController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('images/accommodation'), $filename);
+            
+            $newType = $request->type ?? $accommodation->type;
+            $path = ($newType == '4') ? public_path('images/accommodation/homestay') : public_path('images/accommodation');
+            $file->move($path, $filename);
             $data['image'] = $filename;
 
             
-            if ($accommodation && $accommodation->image && file_exists(public_path('images/accommodation/' . $accommodation->image))) {
-                unlink(public_path('images/accommodation/' . $accommodation->image));
+            $oldPath = ($accommodation->type == '4') ? public_path('images/accommodation/homestay/') : public_path('images/accommodation/');
+            if ($accommodation && $accommodation->image && file_exists($oldPath . $accommodation->image)) {
+                unlink($oldPath . $accommodation->image);
             }
         }
 
@@ -132,11 +140,14 @@ class AccommodationController extends Controller
     public function destroy(string $id)
     {
         $accommodation = DB::table('accommodation')->where('aid', $id)->first();
-        if ($accommodation && $accommodation->image && file_exists(public_path('images/accommodation/' . $accommodation->image))) {
-            unlink(public_path('images/accommodation/' . $accommodation->image));
+        if ($accommodation) {
+            $oldPath = ($accommodation->type == '4') ? public_path('images/accommodation/homestay/') : public_path('images/accommodation/');
+            if ($accommodation->image && file_exists($oldPath . $accommodation->image)) {
+                unlink($oldPath . $accommodation->image);
+            }
+            DB::table('accommodation')->where('aid', $id)->delete();
         }
 
-        DB::table('accommodation')->where('aid', $id)->delete();
         return response()->json(['message' => 'Accommodation deleted successfully']);
     }
 }
