@@ -179,53 +179,48 @@ class SettingsController extends Controller
     public function changePassword(Request $request)
     {
         $request->validate([
-            'otp'          => 'required|digits:6',
-            'new_password' => 'required|string|min:6',
+            'current_password' => 'required|string',
+            'new_password'     => 'required|string|min:6',
         ]);
 
-        $admin  = $request->user();
-        $record = DB::table('admin_otps')
-            ->where('email', $admin->email)
-            ->where('otp', $request->otp)
-            ->where('expires_at', '>=', now())
-            ->first();
-
-        if (!$record) {
-            return response()->json(['message' => 'Invalid or expired OTP.'], 401);
+        $admin = \App\Models\Admin::first();
+        if (!$admin) {
+            return response()->json(['message' => 'Admin account not found.'], 404);
         }
 
-        DB::table('admin_otps')->where('email', $admin->email)->delete();
+        if ($admin->password !== md5($request->current_password)) {
+            return response()->json(['message' => 'Current password does not match.'], 400);
+        }
+
         $admin->password = md5($request->new_password);
         $admin->save();
 
         return response()->json(['message' => 'Password changed successfully.']);
     }
 
-    
-
     public function changeEmail(Request $request)
     {
         $request->validate([
-            'otp'       => 'required|digits:6',
-            'new_email' => 'required|email',
+            'current_password' => 'required|string',
+            'new_email'        => 'required|email',
         ]);
 
-        $admin  = $request->user();
-        $record = DB::table('admin_otps')
-            ->where('email', $admin->email)
-            ->where('otp', $request->otp)
-            ->where('expires_at', '>=', now())
-            ->first();
-
-        if (!$record) {
-            return response()->json(['message' => 'Invalid or expired OTP.'], 401);
+        $admin = \App\Models\Admin::first();
+        if (!$admin) {
+            return response()->json(['message' => 'Admin account not found.'], 404);
         }
 
-        DB::table('admin_otps')->where('email', $admin->email)->delete();
+        if ($admin->password !== md5($request->current_password)) {
+            return response()->json(['message' => 'Current password is required to change primary email.'], 400);
+        }
+
         $admin->email = $request->new_email;
         $admin->save();
 
-        return response()->json(['message' => 'Email changed successfully.', 'new_email' => $admin->email]);
+        // Also update primary email in access_emails if present
+        DB::table('access_emails')->where('id', 1)->update(['email' => $request->new_email]);
+
+        return response()->json(['message' => 'Primary email changed successfully.', 'new_email' => $admin->email]);
     }
 
     

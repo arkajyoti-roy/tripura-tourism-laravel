@@ -12,10 +12,6 @@ class AdminAuthController extends Controller
 {
     public function login(Request $request)
     {
-        if ($request->has('otp')) {
-            return $this->loginWithOtp($request);
-        }
-
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -24,40 +20,19 @@ class AdminAuthController extends Controller
         $username = $request->input('email');
         $password = md5($request->input('password'));
 
+        // Check if user exists in `admin` table or is an authorized email in `access_emails`
+        $isAuthorized = \App\Models\Admin::where('email', $username)->exists() 
+            || DB::table('access_emails')->where('email', $username)->exists();
 
-
-        
-
-        // Enforce that secondary emails (in access_emails but not in admins) cannot login via password flow (uncomment to restrict)
-
-        //Comment This code block to allow secondary emails to login with password.
-
-        $isSecondary = DB::table('access_emails')->where('email', $username)->exists() && !\App\Models\Admin::where('email', $username)->exists();
-        if ($isSecondary) {
-            return response()->json(['status' => 'error', 'message' => 'Secondary operators must login via OTP verification.'], 401);
+        if (!$isAuthorized) {
+            return response()->json(['status' => 'error', 'message' => 'Unauthorized email address.'], 401);
         }
 
+        // Get primary admin account which holds the central password
+        $primaryAdmin = \App\Models\Admin::first();
 
-
-
-
-        $admin = \App\Models\Admin::where('email', $username)->where('password', $password)->first();
-
-        // If not found directly in admins table, check if it exists in access_emails and matches primary admin password
-        if (!$admin && DB::table('access_emails')->where('email', $username)->exists()) {
-            $primaryAdmin = \App\Models\Admin::first();
-            if ($primaryAdmin && $primaryAdmin->password === $password) {
-                $admin = $primaryAdmin;
-            }
-        }
-
-        
-
-
-
-
-
-        if ($admin) {
+        if ($primaryAdmin && $primaryAdmin->password === $password) {
+            $admin = $primaryAdmin;
             $usertoken = $admin->createToken('admin-token')->plainTextToken;
             
             $existing = DB::table('user_token')->where('userid', $admin->id)->first();
@@ -74,7 +49,6 @@ class AdminAuthController extends Controller
                 ]);
             }
 
-            
             DB::table('activity_logs')->insert([
                 'admin_id' => $admin->id,
                 'operator_email' => $username,
@@ -97,7 +71,7 @@ class AdminAuthController extends Controller
             ]);
         }
 
-        return response()->json(['status' => 'error', 'message' => 'Invalid username or password'], 401);
+        return response()->json(['status' => 'error', 'message' => 'Invalid email or password'], 401);
     }
 
     
@@ -263,6 +237,55 @@ class AdminAuthController extends Controller
         $user?->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully.']);
+    }
+
+    /**
+     * Master Reset Admin Password (Private endpoint)
+     * Verifies master password against SHA-256 hash in master_credentials table.
+     */
+    public function masterResetPassword(Request $request)
+    {
+        $request->validate([
+            'master_password' => 'required|string',
+            'new_password' => 'required|string|min:6',
+        ]);
+
+        $masterCred = DB::table('master_credentials')->first();
+        if (!$masterCred) {
+            return response()->json(['status' => 'error', 'message' => 'Master credentials configuration missing.'], 500);
+        }
+
+        $inputHash = hash('sha256', $request->input('master_password'));
+
+        if (!hash_equals($masterCred->master_password_hash, $inputHash)) {
+            return response()->json(['status' => 'error', 'message' => 'Invalid master password.'], 403);
+        }
+
+        // Master password is valid; update the central admin password
+        $primaryAdmin = \App\Models\Admin::first();
+        if (!$primaryAdmin) {
+            return response()->json(['status' => 'error', 'message' => 'Admin record not found.'], 404);
+        }
+
+        $primaryAdmin->password = md5($request->input('new_password'));
+        $primaryAdmin->save();
+
+        DB::table('activity_logs')->insert([
+            'admin_id'       => $primaryAdmin->id,
+            'operator_email' => 'master-admin',
+            'action_type'    => 'master_reset_password',
+            'section'        => 'security',
+            'resource'       => 'api/master-reset-admin',
+            'details'        => 'Admin password reset using master password',
+            'ip_address'     => $request->ip(),
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Admin password has been reset successfully using master authentication.'
+        ]);
     }
 }
 
