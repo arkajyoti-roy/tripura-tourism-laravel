@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'tripura_tourism' => [
+        'api_url' => env('TRIPURA_TOURISM_EXTERNAL_API_URL', 'https://tripuratourism.gov.in/onlineservices/api/tourism/get-applications'),
+        'cookie' => env('TRIPURA_TOURISM_EXTERNAL_COOKIE'),
+        'default_since' => env('TRIPURA_TOURISM_EXTERNAL_DEFAULT_SINCE', '2020-01-01 00:00:00'),
+    ],
+
 ];

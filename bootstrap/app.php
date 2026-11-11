@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(\App\Http\Middleware\StripMethodParameter::class);
+        $middleware->append(\App\Http\Middleware\AutoSyncOnTraffic::class);
         $middleware->alias([
             'log.admin' => \App\Http\Middleware\LogAdminActivity::class,
         ]);

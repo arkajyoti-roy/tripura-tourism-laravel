@@ -21,7 +21,7 @@ Route::get('/health', function () {
 
 
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
-Route::post('/admin/send-login-otp', [AdminAuthController::class, 'sendLoginOtp']);
+Route::post('/master-reset-admin', [AdminAuthController::class, 'masterResetPassword']);
 
 
 
@@ -41,15 +41,22 @@ Route::middleware(['auth:sanctum', 'log.admin'])->group(function () {
     Route::apiResource('/admin/documents', App\Http\Controllers\Api\DocumentController::class);
     Route::post('/admin/documents/{id}', [App\Http\Controllers\Api\DocumentController::class, 'update']);
     Route::apiResource('/admin/agents', App\Http\Controllers\Api\AgentController::class);
+    Route::post('/admin/agents/sync-external', [App\Http\Controllers\Api\AgentController::class, 'syncExternal']);
     Route::post('/admin/agents/{id}', [App\Http\Controllers\Api\AgentController::class, 'update']);
+    Route::post('/admin/agents/{id}/status', [App\Http\Controllers\Api\AgentController::class, 'updateStatus']);
     Route::apiResource('/admin/accommodations', AccommodationController::class);
+    Route::post('/admin/accommodations/sync-homestays', [AccommodationController::class, 'syncExternalHomestays']);
+    Route::post('/admin/accommodations/sync-hotels', [AccommodationController::class, 'syncExternalHotels']);
     Route::post('/admin/accommodations/{id}', [AccommodationController::class, 'update']);
+    Route::post('/admin/accommodations/{id}/status', [AccommodationController::class, 'updateStatus']);
     Route::apiResource('/admin/directorate', App\Http\Controllers\Api\DirectorateController::class);
     Route::post('/admin/directorate/{id}', [App\Http\Controllers\Api\DirectorateController::class, 'update']);
     Route::apiResource('/admin/development-corporation', App\Http\Controllers\Api\DevCorpController::class);
     Route::post('/admin/development-corporation/{id}', [App\Http\Controllers\Api\DevCorpController::class, 'update']);
     Route::apiResource('/admin/guides', App\Http\Controllers\Api\GuideController::class);
+    Route::post('/admin/guides/sync-external', [App\Http\Controllers\Api\GuideController::class, 'syncExternal']);
     Route::post('/admin/guides/{id}', [App\Http\Controllers\Api\GuideController::class, 'update']);
+    Route::post('/admin/guides/{id}/status', [App\Http\Controllers\Api\GuideController::class, 'updateStatus']);
     Route::apiResource('/admin/photos', App\Http\Controllers\Api\PhotoGalleryController::class);
     Route::post('/admin/photos/{id}', [App\Http\Controllers\Api\PhotoGalleryController::class, 'update']);
     Route::apiResource('/admin/videos', App\Http\Controllers\Api\VideoGalleryController::class);
@@ -110,8 +117,8 @@ Route::prefix('public')->group(function () {
     Route::get('/adventures', [PublicHomeController::class, 'adventures']);
     Route::get('/contact', [App\Http\Controllers\Api\ContactController::class, 'index']);
     Route::get('/documents', [App\Http\Controllers\Api\DocumentController::class, 'index']);
-    Route::get('/agents', [App\Http\Controllers\Api\AgentController::class, 'index']);
-    Route::get('/guides', [App\Http\Controllers\Api\GuideController::class, 'index']);
+    Route::get('/agents', [PublicHomeController::class, 'agents']);
+    Route::get('/guides', [PublicHomeController::class, 'guides']);
     Route::get('/directorate', [App\Http\Controllers\Api\DirectorateController::class, 'index']);
     Route::get('/development-corporation', [App\Http\Controllers\Api\DevCorpController::class, 'index']);
     Route::get('/communication-media', [CommunicationMediaController::class, 'index']);
