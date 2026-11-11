@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 /*
@@ -47,4 +49,26 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Minimal agents table used by the agent feature tests (the real table is
+ * managed outside the migrations folder).
+ */
+function createAgentsTable(): void
+{
+    Schema::dropIfExists('agents');
+
+    Schema::create('agents', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('address')->nullable();
+        $table->string('email')->nullable();
+        $table->string('phone')->nullable();
+        $table->string('validDate')->nullable();
+        $table->boolean('is_active')->nullable();
+        $table->timestamp('updateDate')->nullable();
+        $table->timestamps();
+        $table->integer('displayorder')->nullable();
+    });
 }
